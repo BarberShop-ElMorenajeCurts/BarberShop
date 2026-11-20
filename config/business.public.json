@@ -1,0 +1,196 @@
+{
+  "settings": {
+    "name": "ElMorenaje Cuts",
+    "timeZone": "America/Curacao",
+    "whatsapp": "+59996768925",
+    "instagram": "https://www.instagram.com/el_morenajecuts/",
+    "tiktok": "https://www.tiktok.com/@el_morenajecuts2",
+    "facebook": "https://www.facebook.com/el_morenajecuts",
+    "address": {
+      "es": "",
+      "en": ""
+    },
+    "mapsUrl": "",
+    "businessDataConfirmed": false
+  },
+  "services": [
+    {
+      "id": "haircut-beard",
+      "name": {
+        "es": "Corte de pelo + barba",
+        "en": "Haircut + beard"
+      },
+      "description": {
+        "es": "Corte de pelo con barba.",
+        "en": "Haircut with beard."
+      },
+      "durationMinutes": 30,
+      "price": 40,
+      "currency": "ANG",
+      "accent": "yellow",
+      "active": true
+    },
+    {
+      "id": "haircut",
+      "name": {
+        "es": "Corte de pelo (sin barba)",
+        "en": "Haircut (without beard)"
+      },
+      "description": {
+        "es": "Corte de pelo sin servicio de barba.",
+        "en": "Haircut without beard service."
+      },
+      "durationMinutes": 30,
+      "price": 35,
+      "currency": "ANG",
+      "accent": "red",
+      "active": true
+    },
+    {
+      "id": "kids-haircut",
+      "name": {
+        "es": "Corte para niños",
+        "en": "Children’s haircut"
+      },
+      "description": {
+        "es": "Corte de pelo para niños.",
+        "en": "Haircut for children."
+      },
+      "durationMinutes": 30,
+      "price": 30,
+      "currency": "ANG",
+      "accent": "blue",
+      "active": true
+    },
+    {
+      "id": "hair-wash",
+      "name": {
+        "es": "Lavado de pelo",
+        "en": "Hair wash"
+      },
+      "description": {
+        "es": "Servicio de lavado de pelo.",
+        "en": "Hair washing service."
+      },
+      "durationMinutes": 30,
+      "price": 5,
+      "currency": "ANG",
+      "accent": "yellow",
+      "active": true
+    },
+    {
+      "id": "womens-eyebrows",
+      "name": {
+        "es": "Cejas (damas)",
+        "en": "Women’s eyebrows"
+      },
+      "description": {
+        "es": "Servicio de cejas para damas.",
+        "en": "Eyebrow service for women."
+      },
+      "durationMinutes": 30,
+      "price": 10,
+      "currency": "ANG",
+      "accent": "red",
+      "active": true
+    }
+  ],
+  "barbers": [
+    {
+      "id": "moreno",
+      "name": "Moreno",
+      "specialty": {
+        "es": "",
+        "en": ""
+      },
+      "serviceIds": [
+        "haircut-beard",
+        "haircut",
+        "kids-haircut",
+        "hair-wash",
+        "womens-eyebrows"
+      ],
+      "active": true
+    },
+    {
+      "id": "nestor",
+      "name": "Nestor",
+      "specialty": {
+        "es": "",
+        "en": ""
+      },
+      "serviceIds": [
+        "haircut-beard",
+        "haircut",
+        "kids-haircut",
+        "hair-wash",
+        "womens-eyebrows"
+      ],
+      "active": true
+    },
+    {
+      "id": "reimon",
+      "name": "Reimon",
+      "specialty": {
+        "es": "",
+        "en": ""
+      },
+      "serviceIds": [
+        "haircut-beard",
+        "haircut",
+        "kids-haircut",
+        "hair-wash",
+        "womens-eyebrows"
+      ],
+      "active": true
+    },
+    {
+      "id": "noel",
+      "name": "Noel",
+      "specialty": {
+        "es": "",
+        "en": ""
+      },
+      "serviceIds": [
+        "haircut-beard",
+        "haircut",
+        "kids-haircut",
+        "hair-wash",
+        "womens-eyebrows"
+      ],
+      "active": true
+    }
+  ],
+  "weeklyHours": [
+    {
+      "weekday": 1,
+      "start": "09:00",
+      "end": "21:00"
+    },
+    {
+      "weekday": 2,
+      "start": "09:00",
+      "end": "21:00"
+    },
+    {
+      "weekday": 3,
+      "start": "09:00",
+      "end": "21:00"
+    },
+    {
+      "weekday": 4,
+      "start": "09:00",
+      "end": "21:00"
+    },
+    {
+      "weekday": 5,
+      "start": "09:00",
+      "end": "21:00"
+    },
+    {
+      "weekday": 6,
+      "start": "09:00",
+      "end": "21:00"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "title": "ElMorenaje Cuts | Barbería en Curaçao",
+  "language": "es",
+  "description": "A bilingual Curaçao barbershop website where clients explore services, view haircut galleries, find shop details, and book appointments with ease.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

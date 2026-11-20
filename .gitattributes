@@ -1,0 +1,9 @@
+# Store deployable images as normal Git blobs; GoDaddy must receive real files.
+* text=auto eol=lf
+*.png -text -filter -diff -merge
+*.jpg -text -filter -diff -merge
+*.jpeg -text -filter -diff -merge
+*.webp -text -filter -diff -merge
+*.ico -text -filter -diff -merge
+*.woff -text -filter -diff -merge
+*.woff2 -text -filter -diff -merge

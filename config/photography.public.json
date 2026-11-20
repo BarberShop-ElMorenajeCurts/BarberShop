@@ -1,0 +1,312 @@
+[
+  {
+    "id": "owned-img-4371",
+    "section": "hero",
+    "url": "/assets/photos/img-4371.jpg",
+    "alt": {
+      "es": "Corte y barba con acabado definido en ElMorenaje Cuts",
+      "en": "Haircut and shaped beard at ElMorenaje Cuts"
+    },
+    "sortOrder": 0
+  },
+  {
+    "id": "owned-img-6753",
+    "section": "barbers",
+    "url": "/assets/photos/img-6753.jpg",
+    "alt": {
+      "es": "Sillas y área de trabajo de ElMorenaje Cuts",
+      "en": "Chairs and work area at ElMorenaje Cuts"
+    },
+    "sortOrder": 0
+  },
+  {
+    "id": "owned-img-7099",
+    "section": "gallery",
+    "url": "/assets/photos/img-7099.jpg",
+    "alt": {
+      "es": "Rizos con degradado y barba perfilada",
+      "en": "Curls with a fade and a shaped beard"
+    },
+    "sortOrder": 0
+  },
+  {
+    "id": "owned-img-6779",
+    "section": "gallery",
+    "url": "/assets/photos/img-6779.jpg",
+    "alt": {
+      "es": "Rizos definidos, degradado y barba",
+      "en": "Defined curls, fade and beard"
+    },
+    "sortOrder": 1
+  },
+  {
+    "id": "owned-img-7314",
+    "section": "gallery",
+    "url": "/assets/photos/img-7314.jpg",
+    "alt": {
+      "es": "Corte peinado hacia atrás y barba",
+      "en": "Slicked-back haircut and beard"
+    },
+    "sortOrder": 2
+  },
+  {
+    "id": "owned-img-9384",
+    "section": "gallery",
+    "url": "/assets/photos/img-9384.jpg",
+    "alt": {
+      "es": "Corte infantil con degradado lateral",
+      "en": "Children’s haircut with a side fade"
+    },
+    "sortOrder": 3
+  },
+  {
+    "id": "owned-img-9031",
+    "section": "gallery",
+    "url": "/assets/photos/img-9031.jpg",
+    "alt": {
+      "es": "Contornos precisos y corte corto",
+      "en": "Precise line-up and short haircut"
+    },
+    "sortOrder": 4
+  },
+  {
+    "id": "owned-img-8817",
+    "section": "gallery",
+    "url": "/assets/photos/img-8817.jpg",
+    "alt": {
+      "es": "Degradado, peinado y barba perfilada",
+      "en": "Fade, styling and shaped beard"
+    },
+    "sortOrder": 5
+  },
+  {
+    "id": "owned-img-0040",
+    "section": "gallery",
+    "url": "/assets/photos/img-0040.jpg",
+    "alt": {
+      "es": "Degradado con contornos definidos",
+      "en": "Fade with defined edges"
+    },
+    "sortOrder": 6
+  },
+  {
+    "id": "owned-img-3442",
+    "section": "gallery",
+    "url": "/assets/photos/img-3442.jpg",
+    "alt": {
+      "es": "Corte infantil con peinado hacia atrás",
+      "en": "Children’s haircut styled back"
+    },
+    "sortOrder": 7
+  },
+  {
+    "id": "owned-img-6769",
+    "section": "gallery",
+    "url": "/assets/photos/img-6769.jpg",
+    "alt": {
+      "es": "Corte con rizos y barba perfilada",
+      "en": "Curly haircut with a shaped beard"
+    },
+    "sortOrder": 8
+  },
+  {
+    "id": "owned-img-9029",
+    "section": "gallery",
+    "url": "/assets/photos/img-9029.jpg",
+    "alt": {
+      "es": "Peinado con volumen y perfilado de barba",
+      "en": "Volume styling and beard shaping"
+    },
+    "sortOrder": 9
+  },
+  {
+    "id": "owned-img-9098",
+    "section": "gallery",
+    "url": "/assets/photos/img-9098.jpg",
+    "alt": {
+      "es": "Corte con flequillo recto y degradado",
+      "en": "Straight-fringe haircut with a fade"
+    },
+    "sortOrder": 10
+  },
+  {
+    "id": "owned-img-7944",
+    "section": "gallery",
+    "url": "/assets/photos/img-7944.jpg",
+    "alt": {
+      "es": "Antes y después de un corte con degradado",
+      "en": "Before and after a fade haircut"
+    },
+    "sortOrder": 11
+  },
+  {
+    "id": "owned-img-9998",
+    "section": "gallery",
+    "url": "/assets/photos/img-9998.jpg",
+    "alt": {
+      "es": "Peinado con color y raya marcada",
+      "en": "Colored hairstyle with a defined part"
+    },
+    "sortOrder": 12
+  },
+  {
+    "id": "owned-img-8057",
+    "section": "gallery",
+    "url": "/assets/photos/img-8057.jpg",
+    "alt": {
+      "es": "Corte terminado en la barbería",
+      "en": "Finished haircut in the barbershop"
+    },
+    "sortOrder": 13
+  },
+  {
+    "id": "owned-img-0089",
+    "section": "gallery",
+    "url": "/assets/photos/img-0089.jpg",
+    "alt": {
+      "es": "Corte clásico con raya lateral",
+      "en": "Classic haircut with a side part"
+    },
+    "sortOrder": 14
+  },
+  {
+    "id": "owned-img-4365",
+    "section": "gallery",
+    "url": "/assets/photos/img-4365.jpg",
+    "alt": {
+      "es": "Degradado lateral y perfilado de barba",
+      "en": "Side fade and beard shaping"
+    },
+    "sortOrder": 15
+  },
+  {
+    "id": "owned-img-5810",
+    "section": "gallery",
+    "url": "/assets/photos/img-5810.jpg",
+    "alt": {
+      "es": "Corte corto con acabado de contornos",
+      "en": "Short haircut with a defined line-up"
+    },
+    "sortOrder": 16
+  },
+  {
+    "id": "owned-img-6490",
+    "section": "gallery",
+    "url": "/assets/photos/img-6490.jpg",
+    "alt": {
+      "es": "Acabado de corte y barba al aire libre",
+      "en": "Haircut and beard finish outdoors"
+    },
+    "sortOrder": 17
+  },
+  {
+    "id": "owned-img-6673",
+    "section": "gallery",
+    "url": "/assets/photos/img-6673.jpg",
+    "alt": {
+      "es": "Detalle de degradado en la nuca",
+      "en": "Close-up of a tapered neckline"
+    },
+    "sortOrder": 18
+  },
+  {
+    "id": "owned-img-6854",
+    "section": "gallery",
+    "url": "/assets/photos/img-6854.jpg",
+    "alt": {
+      "es": "Peinado con volumen y barba definida",
+      "en": "Volume hairstyle with a defined beard"
+    },
+    "sortOrder": 19
+  },
+  {
+    "id": "owned-img-7001",
+    "section": "gallery",
+    "url": "/assets/photos/img-7001.jpg",
+    "alt": {
+      "es": "Corte corto con textura y degradado",
+      "en": "Textured short haircut with a fade"
+    },
+    "sortOrder": 20
+  },
+  {
+    "id": "owned-img-7242",
+    "section": "gallery",
+    "url": "/assets/photos/img-7242.jpg",
+    "alt": {
+      "es": "Acabado de corte con raya marcada",
+      "en": "Haircut finish with a defined part"
+    },
+    "sortOrder": 21
+  },
+  {
+    "id": "owned-img-7535",
+    "section": "gallery",
+    "url": "/assets/photos/img-7535.jpg",
+    "alt": {
+      "es": "Peinado hacia atrás con degradado lateral",
+      "en": "Slicked-back style with a side fade"
+    },
+    "sortOrder": 22
+  },
+  {
+    "id": "owned-img-7543",
+    "section": "gallery",
+    "url": "/assets/photos/img-7543.jpg",
+    "alt": {
+      "es": "Detalle lateral de corte y peinado",
+      "en": "Side view of a haircut and styling"
+    },
+    "sortOrder": 23
+  },
+  {
+    "id": "owned-img-8266",
+    "section": "gallery",
+    "url": "/assets/photos/img-8266.jpg",
+    "alt": {
+      "es": "Contornos y degradado vistos de perfil",
+      "en": "Profile view of line-up and fade"
+    },
+    "sortOrder": 24
+  },
+  {
+    "id": "owned-img-8611",
+    "section": "gallery",
+    "url": "/assets/photos/img-8611.jpg",
+    "alt": {
+      "es": "Corte corto en la silla de barbería",
+      "en": "Short haircut in the barber chair"
+    },
+    "sortOrder": 25
+  },
+  {
+    "id": "owned-img-9062",
+    "section": "gallery",
+    "url": "/assets/photos/img-9062.jpg",
+    "alt": {
+      "es": "Corte con raya lateral y barba",
+      "en": "Haircut with a side part and beard"
+    },
+    "sortOrder": 26
+  },
+  {
+    "id": "owned-img-9143",
+    "section": "gallery",
+    "url": "/assets/photos/img-9143.jpg",
+    "alt": {
+      "es": "Acabado de corte con flequillo",
+      "en": "Fringe haircut finish"
+    },
+    "sortOrder": 27
+  },
+  {
+    "id": "owned-img-9656",
+    "section": "gallery",
+    "url": "/assets/photos/img-9656.jpg",
+    "alt": {
+      "es": "Detalle de corte y contornos",
+      "en": "Haircut and line-up detail"
+    },
+    "sortOrder": 28
+  }
+]
