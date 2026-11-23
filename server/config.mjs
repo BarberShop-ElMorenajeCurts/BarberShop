@@ -38,6 +38,7 @@ export function loadConfig(env = process.env, cwd = process.cwd()) {
     redirectUri: env.GOOGLE_REDIRECT_URI || `${origin.origin}/api/auth/google/callback`,
     adminSub: env.ADMIN_GOOGLE_SUB || '', adminEmail: (env.ADMIN_GOOGLE_EMAIL || '').toLowerCase(),
     emailEnabled, scopes: [...GOOGLE_SCOPES, ...(emailEnabled ? [GMAIL_SCOPE] : [])],
+    cronSecret: env.CRON_SECRET || '',
     pollInterval: Math.max(10000, Number(env.GOOGLE_POLL_INTERVAL_MS || 30000)),
   }
 }

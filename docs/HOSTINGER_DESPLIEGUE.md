@@ -61,3 +61,47 @@ vacía ni ampliar permisos indiscriminadamente para ocultar el problema.
 
 Antes de habilitar reservas reales también deben verificarse las tareas
 programadas, el correo y la sincronización con Calendar.
+
+## Disparador de tareas programadas
+
+El servidor mantiene los ciclos de trabajo mientras está activo. Configurar
+también un cron externo cada minuto permite despertarlo y recuperar ciclos tras
+interrupciones del proceso. Ambos caminos comparten las tareas en curso para
+evitar ejecuciones simultáneas del mismo trabajo dentro del servidor.
+
+1. Publicar la versión que incluye `scripts/run-scheduled.mjs`.
+2. Generar una clave nueva en la terminal local y guardarla solo en Hostinger como
+   `CRON_SECRET`. No reutilizar `TOKEN_ENCRYPTION_KEY`:
+
+   ```sh
+   node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+   ```
+
+3. Aplicar las variables y reiniciar la aplicación. Una clave ausente o mal formada
+   deshabilita el disparador, pero no impide arrancar el sitio.
+4. En **Avanzado → Cron Jobs**, configurar cada minuto (`* * * * *`) con este comando
+   de 203 caracteres, sin agregar de nuevo el ejecutable si el panel ya lo prefija:
+
+   ```sh
+   /opt/alt/alt-nodejs24/root/bin/node --env-file=/home/u435797455/domains/elmorenajecuts.com/hbuilds/config/.env /home/u435797455/domains/elmorenajecuts.com/hbuilds/current/nodejs/scripts/run-scheduled.mjs
+   ```
+
+   Comprobar que esas rutas existen en esta cuenta. Si Hostinger utiliza otra
+   carpeta para el dominio, ajustar las dos rutas al directorio real.
+5. Revisar la salida del cron en `.logs`: debe indicar `Ciclo de tareas completado.`
+   En modo `setup`, Calendar y los envíos siguen suspendidos; este resultado
+   comprueba el disparador, no la entrega de correo ni el acceso a cada calendario.
+
+El cliente hace un POST a `/api/internal/jobs` con la clave en la cabecera
+Authorization, nunca en la URL. No abre SQLite, no solicita una sesión de usuario
+y no imprime claves, tokens, cuerpos de error ni datos de clientes. No sigue
+redirecciones y utiliza HTTPS, salvo en pruebas locales.
+
+El cron de Hostinger no hereda las variables de la web: el comando usa el archivo
+de configuración privado del proveedor. No subir ese archivo al repositorio.
+La frecuencia de un minuto no equivale a una garantía de ejecución en un segundo
+exacto; los ciclos internos se ejecutan con mayor frecuencia mientras el proceso
+está activo. Comprobar el vencimiento de solicitudes y los recordatorios antes
+de dar por validada la operación real.
+
+Referencia: [cron para Node.js en Hostinger](https://www.hostinger.com/support/how-to-run-cron-jobs-for-node-js-websites-at-hostinger/).

@@ -1,11 +1,12 @@
 import http from 'node:http'
 import { createReadStream, existsSync, statSync } from 'node:fs'
 import path from 'node:path'
-import { Auth } from './auth.mjs'
+import { Auth, sameSecret } from './auth.mjs'
 import { BookingService } from './service.mjs'
 import { GoogleAdapter, DemoAdapter } from './google.mjs'
 import { Store } from './store.mjs'
 import { assert, Problem } from './config.mjs'
+import { createScheduler } from './scheduler.mjs'
 
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.ico': 'image/x-icon' }
 export async function body(req) {
@@ -23,6 +24,10 @@ export function createApplication(config, { store: injectedStore, adapter: injec
   const store = injectedStore || new Store(config.dataDir, { demo: config.mode === 'demo' })
   const adapter = injectedAdapter || (config.mode === 'demo' ? new DemoAdapter(store) : new GoogleAdapter(config, store, { now, fetchImpl }))
   const service = new BookingService(config, store, adapter, { now }), auth = new Auth(config, store, adapter, { now, fetchImpl })
+  const scheduler = createScheduler(service, {
+    pollInterval: config.pollInterval,
+    onError: () => store.audit('worker.error', null, 'No se pudo ejecutar el ciclo de tareas.', now()),
+  })
   const limits = new Map()
   const rateLimit = (req, bucket, max = 30) => {
     const key = `${bucket}:${req.socket.remoteAddress}`, current = limits.get(key)
@@ -41,6 +46,12 @@ export function createApplication(config, { store: injectedStore, adapter: injec
         res.setHeader('Cache-Control', 'no-store')
         if (!['GET', 'HEAD'].includes(method)) auth.origin(req)
         if (route === '/api/health' && method === 'GET') return json(res, 200, { ok: true, mode: config.mode })
+        if (route === '/api/internal/jobs' && method === 'POST') {
+          assert(/^[a-f0-9]{64}$/i.test(config.cronSecret), 'CRON_NOT_CONFIGURED', 'Las tareas programadas no están configuradas.', 503)
+          assert(sameSecret(req.headers.authorization, `Bearer ${config.cronSecret}`), 'CRON_UNAUTHORIZED', 'Disparador de tareas no autorizado.', 401)
+          await scheduler.runCycle()
+          return json(res, 200, { ok: true })
+        }
         if (route === '/api/catalog' && method === 'GET') return json(res, 200, service.catalog())
         if (route === '/api/session' && method === 'GET') return json(res, 200, auth.view(req))
         if (route === '/api/availability' && method === 'GET') { rateLimit(req, 'availability', 300); return json(res, 200, await service.available(url.searchParams.get('serviceId'), url.searchParams.get('barberId'), url.searchParams.get('date'))) }
@@ -91,13 +102,7 @@ export function createApplication(config, { store: injectedStore, adapter: injec
     }
   })
   server.requestTimeout = 30000; server.headersTimeout = 15000
-  let worker = null, sync = null, runningJobs = false, runningSync = false
-  function startWorkers() {
-    if (worker) return
-    const jobs = async () => { if (runningJobs) return; runningJobs = true; try { await service.runJobs() } catch { store.audit('worker.error', null, 'No se pudo ejecutar el ciclo de tareas.', now()) } finally { runningJobs = false } }
-    const poll = async () => { if (runningSync) return; runningSync = true; try { await service.syncCalendars() } finally { runningSync = false } }
-    worker = setInterval(jobs, 2000); sync = setInterval(poll, config.pollInterval); worker.unref(); sync.unref(); void poll().then(jobs)
-  }
-  async function close() { clearInterval(worker); clearInterval(sync); await new Promise(resolve => server.close(resolve)); await service.tail; if (!injectedStore) store.close() }
+  function startWorkers() { scheduler.start() }
+  async function close() { scheduler.stop(); await new Promise(resolve => server.close(resolve)); await scheduler.drain(); await service.tail; if (!injectedStore) store.close() }
   return { server, store, service, auth, adapter, startWorkers, close }
 }
