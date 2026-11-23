@@ -88,9 +88,16 @@ evitar ejecuciones simultáneas del mismo trabajo dentro del servidor.
 
    Comprobar que esas rutas existen en esta cuenta. Si Hostinger utiliza otra
    carpeta para el dominio, ajustar las dos rutas al directorio real.
-5. Revisar la salida del cron en `.logs`: debe indicar `Ciclo de tareas completado.`
+5. Revisar la salida del cron en `.logs` o **Ver salida**: debe indicar
+   `Iniciando ciclo de tareas.` y `Ciclo de tareas completado.`
    En modo `setup`, Calendar y los envíos siguen suspendidos; este resultado
    comprueba el disparador, no la entrega de correo ni el acceso a cada calendario.
+
+Si Node muestra su versión y las rutas del archivo de entorno y del script existen,
+pero el cron no imprime nada, comprobar la versión del cliente. La entrada resuelve
+las rutas reales antes de compararlas, para admitir el enlace `hbuilds/current`.
+Los errores controlados aparecen como `ERROR: ...` en la salida del cron, con código
+de salida distinto de cero y sin incluir valores de configuración privados.
 
 El cliente hace un POST a `/api/internal/jobs` con la clave en la cabecera
 Authorization, nunca en la URL. No abre SQLite, no solicita una sesión de usuario

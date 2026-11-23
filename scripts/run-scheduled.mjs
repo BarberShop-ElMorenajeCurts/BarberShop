@@ -1,4 +1,4 @@
-import path from 'node:path'
+import { realpathSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { isLocalHost } from '../server/config.mjs'
 
@@ -22,7 +22,13 @@ export async function runScheduled(env = process.env, fetchImpl = fetch) {
   if (result?.ok !== true) throw new Error('El servidor no confirmó el ciclo de tareas.')
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+// Hostinger's "current" directory is a link to a versioned deployment. Node
+// resolves the module URL to its real path, while argv can retain "current".
+let isEntryPoint = false
+try { isEntryPoint = Boolean(process.argv[1]) && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url)) } catch {}
+if (isEntryPoint) {
+  console.log('Iniciando ciclo de tareas.')
   try { await runScheduled(); console.log('Ciclo de tareas completado.') }
-  catch (error) { console.error(error.message); process.exitCode = 1 }
+  // Keep safe errors in stdout too: cron output viewers may omit stderr.
+  catch (error) { console.log(`ERROR: ${error.message}`); process.exitCode = 1 }
 }
