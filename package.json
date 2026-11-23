@@ -20,7 +20,7 @@
     "restore": "node scripts/restore.mjs",
     "package:release": "node scripts/package-release.mjs",
     "test:release": "node scripts/smoke-release.mjs",
-    "start": "node --env-file-if-exists=.env server/index.mjs",
+    "start": "node app.cjs",
     "preview": "vite preview",
     "prepreview:admin": "npm run build",
     "preview:admin": "node scripts/admin-preview.mjs",
