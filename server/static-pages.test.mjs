@@ -16,6 +16,8 @@ test('public directory documents work without authentication while SPA and prote
   const spa = '<!doctype html><html><body><div id="root"></div></body></html>'
   fs.writeFileSync(path.join(config.distDir, 'privacidad', 'index.html'), document)
   fs.writeFileSync(path.join(config.distDir, 'index.html'), spa)
+  fs.writeFileSync(path.join(config.distDir, 'robots.txt'), 'User-agent: *\nAllow: /\n')
+  fs.writeFileSync(path.join(config.distDir, 'sitemap.xml'), '<?xml version="1.0"?><urlset/>')
   const app = createApplication(config)
   t.after(async () => {
     await app.close()
@@ -40,6 +42,11 @@ test('public directory documents work without authentication while SPA and prote
   for (const route of ['/', '/admin', '/unknown-spa-route']) {
     assert.equal(await (await fetch(base + route)).text(), spa)
   }
+  assert.equal((await fetch(base + '/admin')).headers.get('x-robots-tag'), 'noindex, nofollow')
+  assert.equal((await fetch(base + '/api/health')).headers.get('x-robots-tag'), 'noindex, nofollow')
+  assert.equal((await fetch(base + '/privacidad')).headers.get('x-robots-tag'), null)
+  assert.match((await fetch(base + '/robots.txt')).headers.get('content-type'), /text\/plain/)
+  assert.match((await fetch(base + '/sitemap.xml')).headers.get('content-type'), /application\/xml/)
   assert.equal((await fetch(base + '/api/admin/overview')).status, 401)
   assert.equal((await fetch(base + '/missing.css')).status, 404)
   assert.equal((await fetch(base + '/privacidad', { method: 'POST' })).status, 405)

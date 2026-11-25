@@ -6,6 +6,7 @@ import path from 'node:path'
 
 import siteConfiguration from './.figma/make/site.json'
 import { legalPagesPlugin, legalPublicPaths } from './src/legal/pages'
+import { publicationPlugin } from './src/public/publication'
 
 
 // Vite config — https://vitejs.dev/config/
@@ -23,6 +24,7 @@ export default defineConfig(({ mode }) => {
 react(),
       tailwindcss(),
       legalPagesPlugin(),
+      publicationPlugin(siteConfiguration.robots?.index !== false),
       figmaSiteConfiguration(siteConfiguration),
       figmaErrorOverlayReplay(),
       figmaReactRefreshBoundaryFallback(),

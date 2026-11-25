@@ -9,6 +9,7 @@ import { assert, isLocalHost, Problem } from './config.mjs'
 import { createScheduler } from './scheduler.mjs'
 
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.ico': 'image/x-icon' }
+Object.assign(types, { '.xml': 'application/xml; charset=utf-8', '.txt': 'text/plain; charset=utf-8' })
 export async function body(req) {
   assert((req.headers['content-type'] || '').split(';')[0] === 'application/json', 'UNSUPPORTED_MEDIA_TYPE', 'La solicitud debe usar JSON.', 415)
   const chunks = []; let size = 0
@@ -61,6 +62,7 @@ export function createApplication(config, { store: injectedStore, adapter: injec
     if (config.secureCookies) res.setHeader('Strict-Transport-Security', 'max-age=31536000')
     try {
       const url = new URL(req.url, config.origin), route = decodeURIComponent(url.pathname), method = req.method
+      if (route === '/admin' || route.startsWith('/admin/') || route.startsWith('/api/')) res.setHeader('X-Robots-Tag', 'noindex, nofollow')
       if (publicOrigin) {
         const host = requestHost(req)
         if (host === aliasHost) {
