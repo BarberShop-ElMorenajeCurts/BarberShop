@@ -44,7 +44,8 @@ sobre un archivo `.env` local.
 
 ## Comprobación y diagnóstico
 
-1. `/api/health` debe responder JSON con `ok: true` y `mode: "setup"`.
+1. `/api/health` debe responder JSON con `ok: true` y el modo esperado: `setup`
+   durante la preparación, `live` después de activar la operación.
 2. `/admin` debe servir la pantalla de acceso y `/api/session` debe responder JSON.
 3. Autorizar la cuenta del negocio y asignar los cuatro calendarios desde el portal.
 4. Comprobar que la configuración permanece después de volver a desplegar.
@@ -156,6 +157,14 @@ Mientras el sitio conserve su configuración de preparación, `robots.txt` permi
 consultar estas cuatro páginas y sus recursos sin abrir el resto del sitio a la
 indexación. No usar un bloqueo de acceso o una pantalla de autenticación para
 estas URLs.
+
+La publicación actual tiene `robots.index: true` en `.figma/make/site.json`.
+`src/public/publication.ts` genera `robots.txt`, `sitemap.xml` y la URL canónica.
+La portada admite rastreo; `/admin` y `/api/` se excluyen y reciben además
+`X-Robots-Tag: noindex, nofollow`. Esto no reemplaza la autenticación.
+Enviar `https://elmorenajecuts.com/sitemap.xml` desde la propiedad verificada de
+Search Console y revisar allí los resultados; publicar un sitemap no garantiza
+indexación inmediata.
 
 Una vez desplegados, en **Google Auth Platform → Información de la marca** usar:
 

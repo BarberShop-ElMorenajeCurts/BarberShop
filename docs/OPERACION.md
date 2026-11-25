@@ -1,6 +1,8 @@
 # C6 — respaldo, recuperación y operación
 
-Actualizado: 19 de noviembre de 2026. Preparación local verificada con datos temporales. No se han respaldado datos reales del negocio ni contratado o desplegado recursos.
+Actualizado: 25 de noviembre de 2026. Herramientas verificadas con datos temporales.
+La instancia real está publicada en Hostinger; el respaldo y la restauración de
+producción siguen pendientes de comprobación. Estado: [CIERRE_ENTREGA.md](CIERRE_ENTREGA.md).
 
 Las herramientas usan Node nativo y `node:sqlite` (Node 22.13 o posterior). No leen `.env`, no llaman a Google y no envían correos. El servidor y sus requisitos se describen en [SERVIDOR.md](SERVIDOR.md).
 
@@ -77,7 +79,10 @@ No restaurar una base con una versión de código de esquema incompatible. Estas
 
 ## Alojamiento y custodia
 
-El propietario confirma Hosting Deluxe comprado en GoDaddy; el dominio sigue sin indicarse. La compatibilidad específica de almacenamiento SQLite privado y persistente sigue por confirmar; véase [ALOJAMIENTO_GODADDY.md](ALOJAMIENTO_GODADDY.md). El soporte genérico de Node no certifica esa persistencia.
+El sitio actual usa Hostinger y el dominio `elmorenajecuts.com`. La raíz privada
+configurada es `/home/u435797455/elmorenaje-data`, con datos reales en `live/`.
+Las instrucciones vigentes están en [HOSTINGER_DESPLIEGUE.md](HOSTINGER_DESPLIEGUE.md).
+GoDaddy corresponde a una alternativa anterior y no es el alojamiento actual.
 
 La aplicación actual requiere una sola instancia Node continuamente activa, disco persistente privado y copias fuera de ese mismo punto de fallo. Un proceso suspendido no ejecuta la confirmación de dos horas ni los recordatorios en su momento. Los trabajos se recuperan al volver a ejecutar el servidor, según las reglas documentadas, pero eso no equivale a haberlos ejecutado puntualmente durante la interrupción.
 
@@ -91,4 +96,6 @@ node --test scripts/tests/backup.test.mjs
 
 Las pruebas usan únicamente SQLite e imágenes temporales y leen la lista pública de URLs del paquete. Cubren conservación de fuente y WAL, restauración de catálogo/reservas/fotos, mezcla de subidas e imágenes estáticas sin copiar estas últimas, dependencia estática ausente/no permitida, compatibilidad con respaldos previos, rechazo de destinos, corrupción, esquema incompleto, modo WAL no consolidado, rutas ambiguas, manifiestos inseguros y CLI explícito. La prueba de enlaces/uniones se omite si Windows no permite crearlos en el entorno de prueba; esa omisión se informa y no se presenta como una comprobación ejecutada.
 
-Esta preparación no sustituye la restauración real de C7 en el alojamiento elegido. No se ha probado la recuperación de datos reales ni el comportamiento del disco de GoDaddy.
+Esta preparación no sustituye la restauración real de C7. No se ha probado la
+recuperación de datos reales de Hostinger; no tratar las pruebas temporales como
+evidencia de una copia de producción recuperable.

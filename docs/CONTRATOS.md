@@ -1,5 +1,8 @@
 # Contratos de construcción — ElMorenaje Cuts
 
+Estado actual: [CIERRE_ENTREGA.md](CIERRE_ENTREGA.md). Los resultados fechados de
+construcción que siguen son históricos.
+
 Inicio: 11 de noviembre de 2026. Fuente funcional: `docs/ALCANCE.md`.
 
 ## Coordinación y dependencia

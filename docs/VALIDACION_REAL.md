@@ -1,6 +1,9 @@
 # C7 — protocolo de validación con Google y correo reales
 
-Estado: preparado, pendiente de ejecución. Las 23 pruebas automáticas de la primera etapa usan adaptadores y respuestas controladas; no sustituyen las evidencias de este protocolo.
+Estado al 25 de noviembre: sitio publicado en modo live; disponibilidad de los
+cuatro barberos consultada. Los casos reales siguientes requieren evidencias
+individuales; las pruebas automáticas no las sustituyen. Consultar el estado
+vigente y la autorización de pruebas en [CIERRE_ENTREGA.md](CIERRE_ENTREGA.md).
 
 ## Preparación
 
