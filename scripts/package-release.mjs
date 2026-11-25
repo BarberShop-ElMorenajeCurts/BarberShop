@@ -128,7 +128,13 @@ export async function packageRelease({ destination, project = process.cwd() } = 
     await fs.writeFile(path.join(staging, 'scripts/start-release.mjs'), startScript, { flag: 'wx' })
     await fs.copyFile(fileURLToPath(new URL('./verify-release.mjs', import.meta.url)), path.join(staging, 'scripts/verify-release.mjs'), fs.constants.COPYFILE_EXCL)
     await fs.writeFile(path.join(staging, 'package.json'), `${JSON.stringify(deploymentPackage, null, 2)}\n`, { flag: 'wx' })
-    const names = [...sourceFiles.map(file => file.name), 'scripts/start-release.mjs', 'scripts/verify-release.mjs', 'package.json'].sort()
+    await fs.writeFile(path.join(staging, '.npmrc'), 'registry=https://registry.npmjs.org/\n', { flag: 'wx' })
+    // A native, dependency-free npm lock selects npm on a fresh import. Do not
+    // copy the development pnpm lock or the host's previously generated lock.
+    const npmLock = { name: deploymentPackage.name, version: deploymentPackage.version, lockfileVersion: 3, requires: true, packages: { '': { name: deploymentPackage.name, version: deploymentPackage.version, engines: deploymentPackage.engines } } }
+    await fs.writeFile(path.join(staging, 'package-lock.json'), `${JSON.stringify(npmLock, null, 2)}\n`, { flag: 'wx' })
+    const names = [...sourceFiles.map(file => file.name), 'scripts/start-release.mjs', 'scripts/verify-release.mjs', 'package.json', '.npmrc'].sort()
+    const deliveryNames = [...names, 'package-lock.json']
     const files = []
     for (const name of names) files.push({ path: name, ...await fileHash(path.join(staging, ...name.split('/'))) })
     const manifest = { format: 'elmorenaje-release', version: 1, createdAt: new Date().toISOString(), files }
@@ -138,7 +144,7 @@ export async function packageRelease({ destination, project = process.cwd() } = 
     // not replaced. Only this execution's reserved output may be rolled back.
     await fs.mkdir(target, { mode: 0o700 }); reserved = true
     await fs.writeFile(path.join(target, '.release-owner'), token, { flag: 'wx', mode: 0o600 })
-    for (const name of [...names, RELEASE_MANIFEST]) {
+    for (const name of [...deliveryNames, RELEASE_MANIFEST]) {
       const output = path.join(target, ...name.split('/'))
       await fs.mkdir(path.dirname(output), { recursive: true }); await fs.copyFile(path.join(staging, ...name.split('/')), output, fs.constants.COPYFILE_EXCL)
     }

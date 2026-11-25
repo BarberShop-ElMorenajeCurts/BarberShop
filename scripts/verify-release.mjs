@@ -9,6 +9,7 @@ const generatedFiles = new Set(['package-lock.json'])
 function ensure(value, message) { if (!value) throw new Error(message) }
 
 export function allowedReleaseFile(value) {
+  if (value === '.npmrc') return true
   if (typeof value !== 'string' || value.includes('\\') || value.includes(':') || value.startsWith('/') || value.split('/').some(part => !part || part === '.' || part === '..' || part.startsWith('.'))) return false
   if (['package.json', 'config/business.public.json', 'config/photography.public.json', 'scripts/start-release.mjs', 'scripts/verify-release.mjs'].includes(value)) return true
   if (/^server\/[a-z][a-z0-9-]*\.mjs$/.test(value) && !value.endsWith('.test.mjs')) return true
@@ -55,6 +56,17 @@ async function collect(directory, { runtime = false, ownerToken = null } = {}, p
       // A normal Git checkout adds root metadata that is not application
       // content. Never inspect it or follow a worktree's gitdir pointer file.
       ensure(!prefix && info.isDirectory(), 'Solo se admite .git como directorio real en la raíz del paquete; archivos de worktree y metadatos anidados no se admiten.')
+      continue
+    }
+    if (!prefix && entry.name === '.airo') {
+      // GoDaddy adds this deployment metadata after importing the source.
+      // It is not application code. Permit only its observed configuration
+      // file, without reading values or allowing links or arbitrary content.
+      ensure(info.isDirectory(), '.airo debe ser un directorio real.')
+      const metadata = await fs.readdir(path.join(directory, '.airo'))
+      ensure(metadata.length === 1 && metadata[0] === 'config.json', 'Metadatos .airo no admitidos: solo se permite config.json.')
+      const config = await fs.lstat(path.join(directory, '.airo/config.json'))
+      ensure(config.isFile() && !config.isSymbolicLink() && config.size <= 65536, 'La configuración .airo debe ser un archivo regular de hasta 64 KiB.')
       continue
     }
     if (!prefix && ownerToken && entry.name === '.release-owner') { ensure(info.isFile() && await fs.readFile(path.join(directory, entry.name), 'utf8') === ownerToken, 'Marca de salida no válida.'); continue }

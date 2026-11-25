@@ -34,6 +34,8 @@ No ejecutar dos compilaciones o cambios de fuente mientras se empaqueta. Se comp
 
 ```text
 package.json
+package-lock.json           lock npm sin dependencias; selecciona npm al importar
+.npmrc                      registro público de npm
 release-manifest.json
 config/business.public.json
 config/photography.public.json
@@ -48,6 +50,10 @@ Se copia solo esa selección: no se lee ni se copia `.env`, `.data`, `.backups`,
 La entrega del 19 de noviembre también incluye las 31 fotografías propias optimizadas bajo `dist/assets/photos` y su manifiesto público. El empaquetador comprueba que cada URL declarada tenga un archivo estático en `dist`. No incluye los originales ni el video conservados fuera de `dist`. El ZIP actual es `.release/elmorenaje-fotos-2026-11-19.zip`; reemplaza a la entrega anterior.
 
 El manifiesto registra tamaño y SHA-256 de cada archivo controlado. El verificador comprueba rutas, inventario, hashes y el contrato de `package.json`. Detecta cambios accidentales y archivos no declarados; **no es una firma digital** ni certifica la seguridad del contenido de código de una fuente no confiable. Los archivos generados por una instalación de npm (`package-lock.json` y `node_modules`) no forman parte del inventario del artefacto original.
+
+Desde el 20 de noviembre, el empaquetador escribe un `package-lock.json` mínimo propio, sin paquetes externos, y un `.npmrc` que sí se incluye en el inventario de integridad. El lock puede regenerarse al instalar. La fuente de desarrollo y sus locks permanecen intactos. Se tolera también el archivo regular `.airo/config.json` de hasta 64 KiB que GoDaddy genera al importar; no se copia de la máquina del usuario, no se leen sus valores y no se permiten enlaces ni otros archivos dentro de `.airo`. Los hashes del servidor y la web siguen verificándose.
+
+Para evitar el checkout bloqueado de la aplicación anterior, la entrega actual es `.release/elmorenaje-godaddy-npm-2026-11-20.zip` y se importa en una aplicación nueva, según [GITHUB_DESPLIEGUE.md](GITHUB_DESPLIEGUE.md). Los ZIP anteriores no incluyen esta corrección.
 
 ## Comprobación independiente
 

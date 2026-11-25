@@ -52,7 +52,7 @@ test('precompiled release includes only public build, native server and independ
   const verified = await verifyRelease(f.destination)
   assert.equal(verified.fileCount, result.fileCount)
   assert.deepEqual(await readTree(f.destination), [
-    'config/business.public.json', 'config/photography.public.json', 'dist/assets/app.js', 'dist/assets/photos/owned-fixture.jpg', 'dist/index.html', 'dist/robots.txt', 'package.json', RELEASE_MANIFEST,
+    '.npmrc', 'package-lock.json', 'config/business.public.json', 'config/photography.public.json', 'dist/assets/app.js', 'dist/assets/photos/owned-fixture.jpg', 'dist/index.html', 'dist/robots.txt', 'package.json', RELEASE_MANIFEST,
     'scripts/start-release.mjs', 'scripts/verify-release.mjs', 'server/config.mjs', 'server/http.mjs', 'server/index.mjs',
   ].sort())
   const pkg = JSON.parse(await fs.readFile(path.join(f.destination, 'package.json'), 'utf8'))
@@ -61,6 +61,9 @@ test('precompiled release includes only public build, native server and independ
   assert.equal(pkg.main, 'server/index.mjs')
   assert.equal(pkg.scripts.start, 'node scripts/start-release.mjs')
   assert.equal(pkg.scripts.build, 'node scripts/verify-release.mjs')
+  const npmLock = JSON.parse(await fs.readFile(path.join(f.destination, 'package-lock.json'), 'utf8'))
+  assert.deepEqual(Object.keys(npmLock.packages), [''])
+  assert.equal(await fs.readFile(path.join(f.destination, '.npmrc'), 'utf8'), 'registry=https://registry.npmjs.org/\n')
   const start = await fs.readFile(path.join(f.destination, 'scripts/start-release.mjs'), 'utf8')
   assert.match(start, /HOST \|\|= '0\.0\.0\.0'/)
   assert.match(start, /APP_MODE \|\|= 'setup'/)
@@ -80,6 +83,39 @@ test('generated npm files and local runtime data do not break a legitimate resta
   await fs.mkdir(path.join(f.destination, '.data'))
   await assert.rejects(verifyRelease(f.destination), /Directorio no admitido/)
   await verifyRelease(f.destination, { runtime: true })
+})
+
+test('GoDaddy root metadata is tolerated without exempting application integrity', async t => {
+  const f = await fixture(t)
+  await packageRelease(f)
+  const metadata = path.join(f.destination, '.airo')
+  await fs.mkdir(metadata)
+  await fs.writeFile(path.join(metadata, 'config.json'), '{"serveCommand":"npm start"}')
+  await verifyRelease(f.destination)
+  await verifyRelease(f.destination, { runtime: true })
+  await fs.appendFile(path.join(f.destination, 'server/index.mjs'), '\n// changed')
+  await assert.rejects(verifyRelease(f.destination), /SHA-256/)
+})
+
+test('GoDaddy metadata exception rejects extra files, directories and linked config', async t => {
+  const f = await fixture(t)
+  await packageRelease(f)
+  const metadata = path.join(f.destination, '.airo'), config = path.join(metadata, 'config.json')
+  await fs.mkdir(metadata)
+  await fs.writeFile(config, '{}')
+  await fs.writeFile(path.join(metadata, 'unexpected.mjs'), 'NOT_METADATA')
+  await assert.rejects(verifyRelease(f.destination), /Metadatos .airo no admitidos/)
+  await fs.unlink(path.join(metadata, 'unexpected.mjs'))
+  await fs.unlink(config)
+  await fs.mkdir(config)
+  await assert.rejects(verifyRelease(f.destination), /archivo regular/)
+  await fs.rmdir(config)
+  const outside = path.join(f.root, 'outside-config.json')
+  await fs.writeFile(outside, '{}')
+  try { await fs.symlink(outside, config, 'file') }
+  catch (error) { if (['EPERM', 'EACCES', 'ENOTSUP'].includes(error.code)) { t.skip('El entorno no permite enlaces de archivo.'); return }; throw error }
+  try { await assert.rejects(verifyRelease(f.destination), /archivo regular/) }
+  finally { await fs.unlink(config) }
 })
 
 test('a normal Git checkout verifies without reading or inventorying root Git metadata', async t => {
