@@ -5,6 +5,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import siteConfiguration from './.figma/make/site.json'
+import { legalPagesPlugin, legalPublicPaths } from './src/legal/pages'
 
 
 // Vite config — https://vitejs.dev/config/
@@ -21,6 +22,7 @@ export default defineConfig(({ mode }) => {
     plugins: [
 react(),
       tailwindcss(),
+      legalPagesPlugin(),
       figmaSiteConfiguration(siteConfiguration),
       figmaErrorOverlayReplay(),
       figmaReactRefreshBoundaryFallback(),
@@ -103,7 +105,9 @@ function figmaSiteConfiguration(config: FigmaSiteConfiguration): Plugin {
   const headEnd = config.customScripts?.headEnd ?? ''
   const bodyStart = config.customScripts?.bodyStart ?? ''
   const bodyEnd = config.customScripts?.bodyEnd ?? ''
-  const robotsTxt = config.robots?.index === false ? 'User-agent: *\nDisallow: /\n' : ''
+  const robotsTxt = config.robots?.index === false
+    ? `User-agent: *\nDisallow: /\n${legalPublicPaths.map(route => `Allow: ${route}$\nAllow: ${route}/\n`).join('')}Allow: /legal.css\nAllow: /el-morenaje-logo.png\n`
+    : ''
 
   return {
     name: 'figma-site-configuration',

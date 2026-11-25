@@ -134,3 +134,36 @@ está activo. Comprobar el vencimiento de solicitudes y los recordatorios antes
 de dar por validada la operación real.
 
 Referencia: [cron para Node.js en Hostinger](https://www.hostinger.com/support/how-to-run-cron-jobs-for-node-js-websites-at-hostinger/).
+
+## Páginas públicas para Google OAuth
+
+La compilación genera documentos HTML independientes, accesibles sin sesión y sin
+JavaScript, con el mismo diseño negro y amarillo y versiones en ambos idiomas:
+
+| Documento | Español | Inglés |
+| --- | --- | --- |
+| Privacidad | `/privacidad` | `/privacy` |
+| Condiciones | `/condiciones` | `/terms` |
+
+El contenido y los datos públicos del responsable están en
+`config/legal.public.json`; actualizar allí también la fecha al cambiar el texto.
+El generador `src/legal/pages.ts` los publica durante `npm run build` y los sirve
+en desarrollo. El servidor Node sirve el `index.html` de cada directorio antes de
+aplicar el fallback de la aplicación React. No cambiar el archivo de entrada ni
+las variables de Google para publicar estos documentos.
+
+Mientras el sitio conserve su configuración de preparación, `robots.txt` permite
+consultar estas cuatro páginas y sus recursos sin abrir el resto del sitio a la
+indexación. No usar un bloqueo de acceso o una pantalla de autenticación para
+estas URLs.
+
+Una vez desplegados, en **Google Auth Platform → Información de la marca** usar:
+
+- Página principal: `https://elmorenajecuts.com`
+- Política de Privacidad: `https://elmorenajecuts.com/privacidad`
+- Condiciones del Servicio: `https://elmorenajecuts.com/condiciones`
+- Dominio autorizado: `elmorenajecuts.com` (sin protocolo ni rutas).
+
+Si Google solicita acreditar la titularidad del dominio, completar esa
+verificación con la cuenta responsable. La publicación de estas páginas no
+equivale a la aprobación de Google ni cambia `APP_MODE` o la apertura de reservas.

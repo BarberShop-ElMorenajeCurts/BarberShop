@@ -580,6 +580,12 @@ export function BookingPanel({
                 "We use these details to manage your appointment and send its notices. Requests remain pending for 2 hours, then confirm automatically unless declined, subject to availability and synchronization.",
               )}
             </p>
+            <p className="booking-notice">
+              {t('Consulta nuestra ', 'Read our ')}
+              <a className="underline underline-offset-2" href={t('/privacidad', '/privacy')} target="_blank" rel="noopener noreferrer">{t('Política de Privacidad', 'Privacy Policy')}</a>
+              {t(' y las ', ' and ')}
+              <a className="underline underline-offset-2" href={t('/condiciones', '/terms')} target="_blank" rel="noopener noreferrer">{t('Condiciones del Servicio', 'Terms of Service')}</a>.
+            </p>
           </>
         )}
       </div>

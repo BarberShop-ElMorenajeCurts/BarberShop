@@ -116,7 +116,10 @@ export function createApplication(config, { store: injectedStore, adapter: injec
       } else {
         const candidate = path.resolve(config.distDir, `.${route}`)
         assert(candidate === config.distDir || candidate.startsWith(`${config.distDir}${path.sep}`), 'NOT_FOUND', 'Ruta no encontrada.', 404)
-        filename = existsSync(candidate) && statSync(candidate).isFile() ? candidate : path.extname(route) ? null : path.join(config.distDir, 'index.html')
+        const directoryIndex = path.join(candidate, 'index.html')
+        filename = existsSync(candidate) && statSync(candidate).isFile() ? candidate
+          : existsSync(candidate) && statSync(candidate).isDirectory() && existsSync(directoryIndex) && statSync(directoryIndex).isFile() ? directoryIndex
+          : path.extname(route) ? null : path.join(config.distDir, 'index.html')
         res.setHeader('Cache-Control', filename?.endsWith('index.html') ? 'no-cache' : 'public, max-age=3600')
       }
       assert(filename && existsSync(filename) && statSync(filename).isFile(), 'NOT_FOUND', 'Compila la aplicación o usa el servidor Vite.', 404)

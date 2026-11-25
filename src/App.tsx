@@ -22,6 +22,8 @@ import {
 
 function readLanguage(): Language {
   try {
+    const requested = new URLSearchParams(window.location.search).get('lang')
+    if (requested === 'es' || requested === 'en') return requested
     return localStorage.getItem("elmorenaje-language") === "en" ? "en" : "es"
   } catch {
     return "es"
@@ -717,6 +719,8 @@ export default function App() {
             </a>
           ))}
           <a href="/admin">{t("Administración", "Administration")}</a>
+          <a href={t('/privacidad', '/privacy')}>{t('Política de Privacidad', 'Privacy Policy')}</a>
+          <a href={t('/condiciones', '/terms')}>{t('Condiciones del Servicio', 'Terms of Service')}</a>
         </div>
         <div className="footer__book">
           <span>{t("¿Necesitas un corte?", "Need a haircut?")}</span>
