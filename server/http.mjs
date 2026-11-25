@@ -5,7 +5,7 @@ import { Auth, sameSecret } from './auth.mjs'
 import { BookingService } from './service.mjs'
 import { GoogleAdapter, DemoAdapter } from './google.mjs'
 import { Store } from './store.mjs'
-import { assert, Problem } from './config.mjs'
+import { assert, isLocalHost, Problem } from './config.mjs'
 import { createScheduler } from './scheduler.mjs'
 
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2', '.ico': 'image/x-icon' }
@@ -21,13 +21,32 @@ export async function body(req) {
   catch (error) { if (error instanceof Problem) throw error; throw new Problem(400, 'INVALID_JSON', 'El cuerpo JSON no es válido.') }
 }
 export function createApplication(config, { store: injectedStore, adapter: injectedAdapter, now = Date.now, fetchImpl = fetch } = {}) {
-  const store = injectedStore || new Store(config.dataDir, { demo: config.mode === 'demo' })
+  const canonicalHost = new URL(config.origin).hostname.toLowerCase()
+  const publicOrigin = !isLocalHost(canonicalHost)
+  const aliasHost = canonicalHost.startsWith('www.') ? canonicalHost.slice(4) : `www.${canonicalHost}`
+  const store = injectedStore || new Store(config.dataDir, { demo: config.mode === 'demo', recoverRunning: !publicOrigin })
   const adapter = injectedAdapter || (config.mode === 'demo' ? new DemoAdapter(store) : new GoogleAdapter(config, store, { now, fetchImpl }))
   const service = new BookingService(config, store, adapter, { now }), auth = new Auth(config, store, adapter, { now, fetchImpl })
   const scheduler = createScheduler(service, {
     pollInterval: config.pollInterval,
     onError: () => store.audit('worker.error', null, 'No se pudo ejecutar el ciclo de tareas.', now()),
   })
+  let workersRequested = false, workersStarted = false, recoveryNeeded = publicOrigin && !injectedStore
+  function activateCanonicalProcess() {
+    if (recoveryNeeded) { store.recoverRunningJobs(); recoveryNeeded = false }
+    if (workersRequested && !workersStarted) { workersStarted = true; scheduler.start() }
+  }
+  function hostname(value) {
+    if (typeof value !== 'string') return ''
+    try { return new URL(`http://${value.split(',')[0].trim()}`).hostname.toLowerCase() } catch { return '' }
+  }
+  function requestHost(req) {
+    const direct = hostname(req.headers.host)
+    if ([canonicalHost, aliasHost].includes(direct)) return direct
+    // Some reverse proxies replace Host. Only recognize our configured hosts.
+    const forwarded = hostname(req.headers['x-forwarded-host'])
+    return [canonicalHost, aliasHost].includes(forwarded) ? forwarded : direct
+  }
   const limits = new Map()
   const rateLimit = (req, bucket, max = 30) => {
     const key = `${bucket}:${req.socket.remoteAddress}`, current = limits.get(key)
@@ -42,6 +61,16 @@ export function createApplication(config, { store: injectedStore, adapter: injec
     if (config.secureCookies) res.setHeader('Strict-Transport-Security', 'max-age=31536000')
     try {
       const url = new URL(req.url, config.origin), route = decodeURIComponent(url.pathname), method = req.method
+      if (publicOrigin) {
+        const host = requestHost(req)
+        if (host === aliasHost) {
+          res.statusCode = 308
+          res.setHeader('Cache-Control', 'no-store')
+          res.setHeader('Location', `${config.origin}${url.pathname}${url.search}`)
+          return res.end()
+        }
+        if (host === canonicalHost) activateCanonicalProcess()
+      }
       if (route.startsWith('/api/')) {
         res.setHeader('Cache-Control', 'no-store')
         if (!['GET', 'HEAD'].includes(method)) auth.origin(req)
@@ -49,6 +78,7 @@ export function createApplication(config, { store: injectedStore, adapter: injec
         if (route === '/api/internal/jobs' && method === 'POST') {
           assert(/^[a-f0-9]{64}$/i.test(config.cronSecret), 'CRON_NOT_CONFIGURED', 'Las tareas programadas no están configuradas.', 503)
           assert(sameSecret(req.headers.authorization, `Bearer ${config.cronSecret}`), 'CRON_UNAUTHORIZED', 'Disparador de tareas no autorizado.', 401)
+          activateCanonicalProcess()
           await scheduler.runCycle()
           return json(res, 200, { ok: true })
         }
@@ -102,7 +132,11 @@ export function createApplication(config, { store: injectedStore, adapter: injec
     }
   })
   server.requestTimeout = 30000; server.headersTimeout = 15000
-  function startWorkers() { scheduler.start() }
+  function startWorkers() {
+    workersRequested = true
+    // The www virtual host must only redirect, without recovering or running jobs.
+    if (!publicOrigin) activateCanonicalProcess()
+  }
   async function close() { scheduler.stop(); await new Promise(resolve => server.close(resolve)); await scheduler.drain(); await service.tail; if (!injectedStore) store.close() }
   return { server, store, service, auth, adapter, startWorkers, close }
 }

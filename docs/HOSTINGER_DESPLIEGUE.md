@@ -62,6 +62,28 @@ vacía ni ampliar permisos indiscriminadamente para ocultar el problema.
 Antes de habilitar reservas reales también deben verificarse las tareas
 programadas, el correo y la sincronización con Calendar.
 
+## Dominio principal y activación
+
+Con `APP_ORIGIN=https://elmorenajecuts.com`, el servidor redirige las peticiones
+de `www.elmorenajecuts.com` al dominio principal, conservando la ruta y la consulta.
+El proceso del alias no recupera tareas interrumpidas ni inicia los temporizadores.
+El proceso principal los inicia al recibir una petición de su dominio o un cron
+autorizado. Las reclamaciones de tareas se hacen con una actualización condicional
+de SQLite, para evitar que dos conexiones reclamen el mismo trabajo pendiente.
+
+Después de publicar, comprobar el 308 de www y el 200 de `/api/health` en el dominio
+principal. La configuración guardada en el portal debe mantenerse entre despliegues.
+Para activar reservas, confirmar los datos del negocio en el portal, verificar el
+estado de Google/Gmail y cambiar `APP_MODE` de `setup` a `live` desde Hostinger.
+El aviso de preparación depende de esos valores: no debe ocultarse con estilos.
+Comprobar `bookingEnabled=true` y hacer una reserva controlada con un correo de
+pruebas autorizado antes de dar por validada la entrega y la agenda.
+
+Si el proyecto OAuth es externo y sigue en pruebas, revisar su publicación en
+Google Cloud y volver a autorizar la cuenta del negocio después de publicarlo.
+La publicación de OAuth y la verificación de Google son procesos diferentes;
+atender los requisitos que Google muestre para el caso concreto.
+
 ## Disparador de tareas programadas
 
 El servidor mantiene los ciclos de trabajo mientras está activo. Configurar

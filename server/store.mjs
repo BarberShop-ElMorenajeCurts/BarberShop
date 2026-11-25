@@ -6,7 +6,7 @@ import { seedCatalog } from './config.mjs'
 import photography from '../config/photography.public.json' with { type: 'json' }
 
 export class Store {
-  constructor(directory, { demo = false } = {}) {
+  constructor(directory, { demo = false, recoverRunning = true } = {}) {
     mkdirSync(directory, { recursive: true, mode: 0o700 })
     this.db = new DatabaseSync(path.join(directory, 'appointments.sqlite'))
     this.db.exec(`PRAGMA journal_mode=WAL; PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000;
@@ -33,10 +33,15 @@ export class Store {
       }
       this.set('photography.seed.v1', true)
     })
+    if (recoverRunning) this.recoverRunningJobs()
+  }
+  recoverRunningJobs() {
     // Calendar operations use stable IDs on recovery. Gmail has no idempotency
     // key: a crashed send could already have been delivered, so do not replay it.
-    this.db.prepare("UPDATE jobs SET state='uncertain',error='El servidor se detuvo durante el envío; entrega desconocida.' WHERE state='running' AND kind IN ('email','reminder')").run()
-    this.db.prepare("UPDATE jobs SET state='pending' WHERE state='running'").run()
+    this.transaction(() => {
+      this.db.prepare("UPDATE jobs SET state='uncertain',error='El servidor se detuvo durante el envío; entrega desconocida.' WHERE state='running' AND kind IN ('email','reminder')").run()
+      this.db.prepare("UPDATE jobs SET state='pending' WHERE state='running'").run()
+    })
   }
   close() { this.db.close() }
   transaction(fn) {

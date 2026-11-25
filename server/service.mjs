@@ -177,9 +177,8 @@ export class BookingService {
     return this.exclusive(async () => { for (const job of this.store.dueJobs(this.now())) await this.execute(job) })
   }
   async execute(job) {
-    const current = this.store.db.prepare('SELECT state FROM jobs WHERE id=?').get(job.id)
-    if (current?.state !== 'pending') return
-    this.store.db.prepare("UPDATE jobs SET state='running',attempts=attempts+1 WHERE id=?").run(job.id)
+    const claimed = this.store.db.prepare("UPDATE jobs SET state='running',attempts=attempts+1 WHERE id=? AND state='pending'").run(job.id)
+    if (!claimed.changes) return
     let b = job.booking ? this.store.booking(job.booking) : null
     if (b && job.payload.version !== b.version) { this.store.finishJob(job.id); return }
     try {

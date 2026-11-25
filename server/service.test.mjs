@@ -43,6 +43,22 @@ test('simultaneous overlapping requests produce one hold and no duplicate Calend
   assert.equal(f.store.events('demo-calendar-1')[0].attendees.length, 0)
 })
 
+test('two database connections cannot both send a job selected before either claim', async t => {
+  const f = fixture(t)
+  await f.service.create(f.input())
+  const job = f.store.dueJobs(f.now()).find(value => value.kind === 'email')
+  assert.ok(job)
+  const secondStore = new Store(f.config.dataDir, { demo: true, recoverRunning: false })
+  try {
+    const secondAdapter = new DemoAdapter(secondStore)
+    secondAdapter.sendEmail = f.adapter.sendEmail
+    const secondService = new BookingService(f.config, secondStore, secondAdapter, { now: f.now })
+    await Promise.all([f.service.execute(job), secondService.execute(job)])
+    assert.equal(f.emails.length, 1)
+    assert.equal(f.store.db.prepare('SELECT attempts FROM jobs WHERE id=?').get(job.id).attempts, 1)
+  } finally { secondStore.close() }
+})
+
 test('idempotency retains original deadline and rejects different private customer data', async t => {
   const f = fixture(t), input = f.input(), first = await f.service.create(input)
   f.advance(10 * 60000)
