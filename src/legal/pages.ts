@@ -1,5 +1,6 @@
 import type { Plugin } from 'vite'
 import legal from '../../config/legal.public.json'
+import site from '../../.figma/make/site.json'
 
 export const legalPublicPaths = legal.documents.map(doc => doc.path)
 
@@ -17,10 +18,11 @@ function render(doc: Document) {
   const home = `/?lang=${doc.language}`
   const privacy = en ? '/privacy' : '/privacidad'
   const terms = en ? '/terms' : '/condiciones'
+  const favicon = escape(site.icons.icon)
   const date = new Intl.DateTimeFormat(en ? 'en-GB' : 'es', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${legal.updated}T12:00:00Z`))
   const sections = doc.sections.map((section, index) => `<section class="legal-section" id="${escape(section.id)}"><h2><span>${String(index + 1).padStart(2, '0')}</span>${escape(section.title)}</h2>${section.paragraphs.map(text => `<p>${escape(text)}</p>`).join('')}${'links' in section && section.links ? `<ul class="legal-references">${section.links.map(item => `<li>${link(item.href, item.label, item.href.startsWith('https://'))}</li>`).join('')}</ul>` : ''}</section>`).join('')
   return `<!doctype html>
-<html lang="${doc.language}"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escape(doc.title)} · ${escape(legal.brand)}</title><meta name="description" content="${escape(doc.description)}"><meta name="referrer" content="strict-origin-when-cross-origin"><link rel="icon" href="/favicon.svg"><link rel="canonical" href="${legal.origin}${doc.path}"><link rel="alternate" hreflang="es" href="${legal.origin}${partner(doc, 'es').path}"><link rel="alternate" hreflang="en" href="${legal.origin}${partner(doc, 'en').path}"><link rel="stylesheet" href="/legal.css?v=${legal.updated}"></head>
+<html lang="${doc.language}"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${escape(doc.title)} · ${escape(legal.brand)}</title><meta name="description" content="${escape(doc.description)}"><meta name="referrer" content="strict-origin-when-cross-origin"><link rel="icon" href="${favicon}"><link rel="apple-touch-icon" href="${favicon}"><link rel="canonical" href="${legal.origin}${doc.path}"><link rel="alternate" hreflang="es" href="${legal.origin}${partner(doc, 'es').path}"><link rel="alternate" hreflang="en" href="${legal.origin}${partner(doc, 'en').path}"><link rel="stylesheet" href="/legal.css?v=${legal.updated}"></head>
 <body><a class="legal-skip" href="#document">${t('Saltar al contenido', 'Skip to content')}</a>
 <header class="legal-header"><a class="legal-brand" href="${home}"><img src="/el-morenaje-logo.png" width="62" height="62" alt="ElMorenaje Cuts"><span>EL MORENAJE<small>CUTS · CURAÇAO</small></span></a><nav aria-label="${t('Idioma', 'Language')}" class="legal-language"><a href="${partner(doc, 'es').path}" lang="es"${!en ? ' aria-current="page"' : ''}>ES</a><a href="${partner(doc, 'en').path}" lang="en"${en ? ' aria-current="page"' : ''}>EN</a></nav></header>
 <main id="document"><div class="legal-hero"><a class="legal-back" href="${home}">← ${t('Volver al sitio', 'Back to website')}</a><p class="legal-eyebrow">${t('Información legal', 'Legal information')}</p><h1>${escape(doc.title)}</h1><p class="legal-intro">${escape(doc.intro)}</p><p class="legal-date">${t('Última actualización', 'Last updated')}: <time datetime="${legal.updated}">${escape(date)}</time></p></div>

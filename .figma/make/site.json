@@ -5,6 +5,9 @@
   "robots": {
     "index": true
   },
+  "icons": {
+    "icon": "/el-morenaje-logo.png"
+  },
   "accessibility": {
     "addBypassLinks": false,
     "ignoreReducedMotion": false
